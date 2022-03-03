@@ -1160,9 +1160,12 @@ public class Parser {
         int line = scanner.token().line();
         if (have(INC)) {
             return new JPreIncrementOp(line, unaryExpression());
-        } else if (have(MINUS)) {
+        }
+         else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression());
-        } else {
+        } else if(have(PLUS)){
+            return new JPromoteOp(line, unaryExpression());
+        }else {
             return simpleUnaryExpression();
         }
     }

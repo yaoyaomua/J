@@ -112,6 +112,54 @@ class JNegateOp extends JUnaryExpression {
  * The AST node for a logical NOT (!) expression.
  */
 
+class JPromoteOp extends JUnaryExpression {
+
+    /**
+     * Constructs an AST node for a negation expression given its line number,
+     * and the operand.
+     * 
+     * @param line
+     *            line in which the negation expression occurs in the source
+     *            file.
+     * @param arg
+     *            the operand.
+     */
+
+    public JPromoteOp(int line, JExpression arg) {
+        super(line, "+", arg);
+    }
+
+    /**
+     * Analyzing the negation operation involves analyzing its operand, checking
+     * its type and determining the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+        arg = arg.analyze(context);
+        arg.type().mustMatchOneOf(line, Type.INT,Type.CHAR);
+        type = Type.INT;
+        return this;
+    }
+
+    /**
+     * Generating code for the negation operation involves generating code for
+     * the operand, and then the negation instruction.
+     * 
+     * @param output
+     *            the code emitter (basically an abstraction for producing the
+     *            .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+        arg.codegen(output);
+        output.addNoArgInstruction(INEG);
+    }
+
+}
 class JLogicalNotOp extends JUnaryExpression {
 
     /**
